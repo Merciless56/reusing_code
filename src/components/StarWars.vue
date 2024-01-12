@@ -31,6 +31,6 @@ export default {
       });
       this.items = results;
     },
+    computed: {}
   },
 };
-</script>

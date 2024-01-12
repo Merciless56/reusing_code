@@ -16,3 +16,5 @@ export function getCategories({ page = 1, filters = {} } = {}) {
   const url = new URL("https://techcrunch.com/wp-json/wp/v2/categories");
   return fetch(url).then((r) => r.json());
 }
+
+

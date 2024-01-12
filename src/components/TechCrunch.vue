@@ -15,9 +15,9 @@
     <hr />
 
     <div>
-      <button :disabled="page === 1" @click="page--">Prev</button>
-      {{ page }}
-      <button @click="page++">Next</button>
+      <button :disabled="page.value === 1" @click="page.value--">Prev</button>
+      {{ page.value }}
+      <button @click="page.value++">Next</button>
     </div>
     <hr />
 
@@ -30,10 +30,9 @@
 </template>
 <script>
 import { getPosts, getCategories } from "../api/techcrunch";
-import { filterableMixin } from './mixins/filterable';
+import { useFilterable } from "../use/filterable";
 
 export default {
-  mixins:[filterableMixin],
   data() {
     return {
       categories: [],
@@ -48,30 +47,23 @@ export default {
     async loadCategories() {
       this.categories = await getCategories();
     },
-
-    async loadItems() {
-      this.items = await getPosts({
-        page: this.page,
-        filters: this.filters,
-      });
-    },
   },
 
   created() {
     this.loadCategories();
-  },
 
-  watch: {
-    page() {
-      this.loadItems();
-      this.updateHash();
-    },
-    selectedCategory() {
-      this.loadItems();
-      this.updateHash();
-      
-      this.page = 1;
-    },
+    const { page, filters, items } = useFilterable(
+      {
+        loadItems: getPosts,
+        initialfilters: {
+          categories: null,
+        },
+      },
+      this
+    );
+    this.page = page;
+    this.filters = filters;
+    this.items = items;
   },
 };
 </script>
